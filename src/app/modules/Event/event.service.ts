@@ -12,7 +12,7 @@ const createEvent = async (payload: TCreateEvent) => {
 
 const getAllEvents = async (query: TEventQuery) => {
   // Create a modified query object for date filtering
-  const modifiedQuery = { ...query };
+  const modifiedQuery: Record<string, unknown> = { ...query };
 
   // Handle filterBy parameter by converting to startDate/endDate
   if (query.filterBy) {
@@ -93,16 +93,18 @@ const getAllEvents = async (query: TEventQuery) => {
     modifiedQuery.sort = '-dateTime';
   }
 
+  // Handle search parameter - convert to searchTerm for QueryBuilder compatibility
+  if (query.search && !query.searchTerm) {
+    modifiedQuery.searchTerm = query.search;
+    delete modifiedQuery.search;
+  }
+
   const eventQuery = new QueryBuilder(Event.find(), modifiedQuery)
     .search(['title', 'description', 'location'])
     .filter()
     .sort()
     .paginate()
-    .fields()
-    .populate({
-      path: 'createdBy',
-      select: 'name email photoUrl',
-    });
+    .fields();
 
   const result = await eventQuery.modelQuery;
   const meta = await eventQuery.countTotal();
@@ -201,7 +203,7 @@ const joinEvent = async (eventId: string, userId: string) => {
   const updatedEvent = await Event.findByIdAndUpdate(
     eventId,
     {
-      $addToSet: { attendees: userId },
+      $addToSet: { attendees: new Types.ObjectId(userId) },
       $inc: { attendeeCount: 1 },
     },
     { new: true },
@@ -211,12 +213,18 @@ const joinEvent = async (eventId: string, userId: string) => {
 };
 
 const getMyEvents = async (userId: string, query: TEventQuery) => {
-  // Add createdBy filter to query
-  const modifiedQuery = { ...query, userId };
+  // Create a modified query object
+  const modifiedQuery: Record<string, unknown> = { ...query };
 
   // Set default sort if not provided
   if (!modifiedQuery.sort) {
     modifiedQuery.sort = '-dateTime';
+  }
+
+  // Handle search parameter
+  if (query.search && !query.searchTerm) {
+    modifiedQuery.searchTerm = query.search;
+    delete modifiedQuery.search;
   }
 
   const eventQuery = new QueryBuilder(
@@ -227,11 +235,7 @@ const getMyEvents = async (userId: string, query: TEventQuery) => {
     .filter()
     .sort()
     .paginate()
-    .fields()
-    .populate({
-      path: 'createdBy',
-      select: 'name email photoUrl',
-    });
+    .fields();
 
   const result = await eventQuery.modelQuery;
   const meta = await eventQuery.countTotal();
@@ -243,25 +247,29 @@ const getMyEvents = async (userId: string, query: TEventQuery) => {
 };
 
 const getJoinedEvents = async (userId: string, query: TEventQuery) => {
+  // Create a modified query object
+  const modifiedQuery: Record<string, unknown> = { ...query };
+
   // Set default sort if not provided
-  const modifiedQuery = { ...query };
   if (!modifiedQuery.sort) {
     modifiedQuery.sort = '-dateTime';
   }
 
+  // Handle search parameter
+  if (query.search && !query.searchTerm) {
+    modifiedQuery.searchTerm = query.search;
+    delete modifiedQuery.search;
+  }
+
   const eventQuery = new QueryBuilder(
-    Event.find({ attendees: { $in: [userId] } }),
+    Event.find({ attendees: { $in: [new Types.ObjectId(userId)] } }),
     modifiedQuery,
   )
     .search(['title', 'description', 'location'])
     .filter()
     .sort()
     .paginate()
-    .fields()
-    .populate({
-      path: 'createdBy',
-      select: 'name email photoUrl',
-    });
+    .fields();
 
   const result = await eventQuery.modelQuery;
   const meta = await eventQuery.countTotal();

@@ -81,10 +81,4 @@ userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
   return passwordChangedTime > jwtIssuedTimestamp;
 };
 
-// Instance methods
-userSchema.methods.addPoints = function (points: number) {
-  this.points += points;
-  return this.save();
-};
-
 export const User = model<IUser, UserModelType>('User', userSchema);

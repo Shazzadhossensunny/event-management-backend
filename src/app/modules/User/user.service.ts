@@ -53,13 +53,13 @@ const updateProfile = async (userId: string, payload: TUpdateProfile) => {
 const getAllUsers = async (page: number = 1, limit: number = 10) => {
   const skip = (page - 1) * limit;
 
-  const users = await User.find({ role: 'user' })
+  const users = await User.find()
     .select('-password')
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
 
-  const total = await User.countDocuments({ role: 'user' });
+  const total = await User.countDocuments();
 
   return {
     users,

@@ -1,8 +1,9 @@
-import { Schema, model, Model } from 'mongoose';
+import { Schema, model, Model, Query } from 'mongoose';
 import { IEvent, IEventModel } from './event.interface';
+import { Types } from 'mongoose';
 
 // Create interface for Event model
-type EventModelType = Model<IEvent, {}> & IEventModel;
+type EventModelType = Model<IEvent> & IEventModel;
 
 const eventSchema = new Schema<IEvent, EventModelType>(
   {
@@ -75,11 +76,15 @@ eventSchema.statics.isUserAlreadyJoined = async function (
   const event = await this.findById(eventId);
   if (!event) return false;
 
-  return event.attendees.includes(userId);
+  // Convert userId string to ObjectId for comparison
+  const userObjectId = new Types.ObjectId(userId);
+  return event.attendees.some((attendeeId: Types.ObjectId) =>
+    attendeeId.equals(userObjectId),
+  );
 };
 
 // Pre-populate middleware for getting events with creator info
-eventSchema.pre(/^find/, function (next) {
+eventSchema.pre(/^find/, function (this: Query<any, any>, next) {
   this.populate({
     path: 'createdBy',
     select: 'name email photoUrl',

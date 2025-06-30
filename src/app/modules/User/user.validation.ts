@@ -14,7 +14,7 @@ export const registerUserValidationSchema = z.object({
   password: z
     .string({ required_error: 'Password is required' })
     .min(6, 'Password must be at least 6 characters'),
-  profileUrl: z.string().url('Please provide a valid image URL'),
+  photoUrl: z.string().url('Please provide a valid image URL'),
 });
 
 export const updateProfileValidationSchema = z.object({
@@ -24,7 +24,7 @@ export const updateProfileValidationSchema = z.object({
     .max(50, 'Name cannot exceed 50 characters')
     .trim()
     .optional(),
-  profileUrl: z.string().url('Please provide a valid image URL').optional(),
+  photoUrl: z.string().url('Please provide a valid image URL').optional(),
 });
 
 export const UserValidation = {

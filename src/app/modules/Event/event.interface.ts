@@ -20,6 +20,7 @@ export type TUpdateEvent = {
 
 export type TEventQuery = {
   search?: string;
+  searchTerm?: string; // Added for compatibility with QueryBuilder
   filterBy?:
     | 'today'
     | 'current-week'
@@ -30,8 +31,10 @@ export type TEventQuery = {
   endDate?: string;
   page?: string;
   limit?: string;
+  sort?: string; // Added sort property
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  fields?: string; // Added fields property
 };
 
 export interface IEvent extends Document {
@@ -48,6 +51,8 @@ export interface IEvent extends Document {
   updatedAt: Date;
 }
 
-export interface IEventModel extends Document {
+export interface IEventStatics {
   isUserAlreadyJoined(eventId: string, userId: string): Promise<boolean>;
 }
+
+export interface IEventModel extends IEventStatics {}
