@@ -76,17 +76,13 @@ const updateEventValidationSchema = z.object({
 
 const joinEventValidationSchema = z.object({
   params: z.object({
-    eventId: z
-      .string({ required_error: 'Event ID is required' })
-      .regex(/^[0-9a-fA-F]{24}$/, 'Invalid event ID format'),
+    eventId: z.string({ required_error: 'Event ID is required' }),
   }),
 });
 
 const getEventValidationSchema = z.object({
   params: z.object({
-    eventId: z
-      .string({ required_error: 'Event ID is required' })
-      .regex(/^[0-9a-fA-F]{24}$/, 'Invalid event ID format'),
+    eventId: z.string({ required_error: 'Event ID is required' }),
   }),
 });
 
