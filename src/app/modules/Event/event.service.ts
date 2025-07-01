@@ -130,7 +130,7 @@ const getSingleEvent = async (eventId: string) => {
 
 const updateEvent = async (
   eventId: string,
-  userId: string,
+  _id: string,
   payload: TUpdateEvent,
 ) => {
   if (!Types.ObjectId.isValid(eventId)) {
@@ -143,7 +143,7 @@ const updateEvent = async (
   }
 
   // Check if the user is the creator of the event
-  if (event.createdBy.toString() !== userId) {
+  if (event.createdBy._id.toString() !== _id) {
     throw new AppError(
       StatusCodes.FORBIDDEN,
       'You are not authorized to update this event',
@@ -169,7 +169,7 @@ const deleteEvent = async (eventId: string, userId: string) => {
   }
 
   // Check if the user is the creator of the event
-  if (event.createdBy.toString() !== userId) {
+  if (event.createdBy._id.toString() !== userId) {
     throw new AppError(
       StatusCodes.FORBIDDEN,
       'You are not authorized to delete this event',

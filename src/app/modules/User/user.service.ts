@@ -21,18 +21,6 @@ const registerUser = async (payload: TRegisterUser) => {
   return user;
 };
 
-const getUserProfile = async (userId: string) => {
-  if (!Types.ObjectId.isValid(userId)) {
-    throw new AppError(StatusCodes.BAD_REQUEST, 'Invalid user ID');
-  }
-
-  const user = await User.findById(userId).select('-password');
-  if (!user) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
-  }
-  return user;
-};
-
 const updateProfile = async (userId: string, payload: TUpdateProfile) => {
   if (!Types.ObjectId.isValid(userId)) {
     throw new AppError(StatusCodes.BAD_REQUEST, 'Invalid user ID');
@@ -75,7 +63,6 @@ const getAllUsers = async (page: number = 1, limit: number = 10) => {
 
 export const UserServices = {
   registerUser,
-  getUserProfile,
   updateProfile,
   getAllUsers,
 };

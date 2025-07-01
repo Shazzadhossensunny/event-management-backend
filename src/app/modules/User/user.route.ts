@@ -8,8 +8,7 @@ const router = Router();
 // Public routes
 router.post('/register', UserControllers.registerUser);
 
-// Protected routes (require authentication)
-router.get('/profile', UserControllers.getUserProfile);
+router.get('/', UserControllers.getAllUsers);
 
 router.patch(
   '/profile',
