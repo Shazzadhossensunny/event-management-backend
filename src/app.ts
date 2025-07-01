@@ -10,16 +10,16 @@ const app: Application = express();
 //parsers
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
-// app.use(
-//   cors({
-//     origin: [
-//       'http://localhost:5173',
-//       'https://task-management-frontend-kappa-kohl.vercel.app',
-//     ],
-//     credentials: true,
-//   }),
-// );
+// app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173',
+      'https://event-management-frontend-ivory.vercel.app',
+    ],
+    credentials: true,
+  }),
+);
 
 //application routes
 app.use('/api', router);
